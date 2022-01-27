@@ -47,7 +47,7 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
         _decimals = decimals_;
 
         _chainid = block.chainid;
-        _domainseparator = domainseparator_(block.chainid);
+        _domainseparator = domainseparator_();
     }
     
     /// @notice Returns The chain id that was set at deployment.
@@ -61,8 +61,8 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
     }
 
     /// @notice Returns the domain separator.
-    function DOMAIN_SEPARATOR() external virtual view returns (bytes32) {
-        return block.chainid == _chainid ? _domainseparator : domainseparator_(block.chainid);
+    function DOMAIN_SEPARATOR() public virtual view returns (bytes32) {
+        return block.chainid == _chainid ? _domainseparator : domainseparator_();
     }
 
     /// @inheritdoc IERC20Metadata
@@ -118,8 +118,9 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
             uint256 allowed = _allowance[from][msg.sender];
 
             if (allowed != type(uint256).max) {
-                if (allowed < amount)
+                if (allowed < amount) {
                     revert InsufficientApproval();
+                }
 
                 unchecked { _approve(from, msg.sender, allowed - amount); }
             }
@@ -153,7 +154,7 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
         bytes32 hash = keccak256(
             abi.encodePacked(
                 "\x19\x01",
-                block.chainid == _chainid ? _domainseparator : domainseparator_(block.chainid),
+                DOMAIN_SEPARATOR(),
                 keccak256(
                     abi.encode(
                         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"),
@@ -175,13 +176,13 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
     }
 
     /// @dev Returns the domain separator.
-    function domainseparator_(uint256 cid) internal virtual view returns (bytes32) {
+    function domainseparator_() internal virtual view returns (bytes32) {
         return keccak256(
             abi.encode(
                 keccak256("EIP712Domain(string name,string version,uint256 chainid,address verifyingContract)"),
                 keccak256(bytes(_name)),
                 keccak256(bytes(version())),
-                cid,
+                block.chainid,
                 address(this)
             )
         );
@@ -194,8 +195,10 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
 
         _before(from, to, amount);
 
-        unchecked { _balanceOf[from] -= amount; }
-        _balanceOf[to] += amount;
+        unchecked {
+            _balanceOf[from] -= amount;
+            _balanceOf[to] += amount;
+        }
         emit Transfer(from, to, amount);
 
         _after(from, to, amount);
