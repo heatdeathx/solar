@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+/// @title Cast
+/// @notice Safely cast between different unsigned integer types that reverts on overflow.
 library Cast {
     /// @notice Thrown when a cast overflows.
     error CastOverflow();
