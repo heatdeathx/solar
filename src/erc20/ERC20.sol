@@ -9,10 +9,10 @@ import "./IERC20Permit.sol";
 contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
     /// @notice Thrown when a `permit` with expired deadline is called.
     error DeadlineExpired();
+    /// @notice Thrown when a call with insufficient allowance is executed.
+    error InsufficientAllowance();
     /// @notice Thrown when a call with insufficient balance is executed.
     error InsufficientBalance();
-    /// @notice Thrown when a call with insufficient allowance is executed.
-    error InsufficientApproval();
     /// @notice Thrown when a `permit` with invalid signature is called.
     error InvalidSignature();
 
@@ -119,7 +119,7 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
 
             if (allowed != type(uint256).max) {
                 if (allowed < amount) {
-                    revert InsufficientApproval();
+                    revert InsufficientAllowance();
                 }
 
                 unchecked { _approve(from, msg.sender, allowed - amount); }
