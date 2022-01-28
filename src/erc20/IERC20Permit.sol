@@ -5,6 +5,10 @@ import "./IERC20Metadata.sol";
 
 /// @title IERC20Permit
 interface IERC20Permit is IERC20Metadata {
+    /// @dev Returns the domain separator used in the encoding of the signature for `permit`, as
+    /// defined by EIP-712.
+    function DOMAIN_SEPARATOR() external view returns (bytes32);
+
     /// @notice Returns the current ERC2612 nonce for `owner`. This value must be included whenever
     /// a signature is generated for {permit}.
     /// @dev Every successful call to {permit} increases ``owner``'s nonce by one. This prevents a

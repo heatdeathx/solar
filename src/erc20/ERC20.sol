@@ -34,9 +34,9 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
     /// @dev The internal `allowance`.
     mapping(address => mapping(address => uint256)) internal _allowance;
 
-    /// @dev The internal chain id, set at deployment.
+    /// @dev The internal chain id set at deployment.
     uint256 internal immutable _chainid;
-    /// @dev The internal domain separator, set at deployment.
+    /// @dev The internal domain separator set at deployment.
     bytes32 internal immutable _domainseparator;
     /// @dev The internal nonces.
     mapping(address => uint256) internal _nonces;
@@ -50,7 +50,7 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
         _domainseparator = domainseparator_();
     }
     
-    /// @notice Returns The chain id that was set at deployment.
+    /// @notice Returns The chain id set at deployment.
     function CHAIN_ID() external virtual view returns (uint256) {
         return _chainid;
     }
@@ -60,7 +60,7 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
         return keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
     }
 
-    /// @notice Returns the domain separator.
+    /// @inheritdoc IERC20Permit
     function DOMAIN_SEPARATOR() public virtual view returns (bytes32) {
         return block.chainid == _chainid ? _domainseparator : domainseparator_();
     }
