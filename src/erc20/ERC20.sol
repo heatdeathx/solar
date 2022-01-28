@@ -21,6 +21,9 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
     /// @dev Emitted when `approval` or `permit` sets the allowance.
     event Approval(address indexed owner, address indexed spender, uint256 value);
 
+    /// @notice Returns the permit typehash.
+    bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
+
     /// @dev The internal `name`.
     string internal _name;
     /// @dev The internal `symbol`.
@@ -48,16 +51,6 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
 
         _chainid = block.chainid;
         _domainseparator = domainseparator_();
-    }
-    
-    /// @notice Returns The chain id set at deployment.
-    function CHAIN_ID() external virtual view returns (uint256) {
-        return _chainid;
-    }
-
-    /// @notice Returns the permit typehash.
-    function PERMIT_TYPEHASH() external virtual pure returns (bytes32) {
-        return keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
     }
 
     /// @inheritdoc IERC20Permit
@@ -157,7 +150,7 @@ contract ERC20 is IERC20, IERC20Metadata, IERC20Permit {
                 DOMAIN_SEPARATOR(),
                 keccak256(
                     abi.encode(
-                        keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"),
+                        PERMIT_TYPEHASH,
                         owner,
                         spender,
                         amount,
